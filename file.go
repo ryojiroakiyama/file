@@ -10,7 +10,7 @@ import (
 
 //ToFile creates a fileName file and writes contents to the file.
 //If successful, ToFile returns nil error.
-//Else returns any error encountered.
+//Else if faulse, ToFile returns any error encountered.
 func ToFile(fileName string, contents []byte) (err error) {
 	dstFile, err := os.Create(fileName)
 	if err != nil {
@@ -32,8 +32,9 @@ func ToFile(fileName string, contents []byte) (err error) {
 }
 
 //ToTmpFile creates a tmpprary file and write contents to the file.
-//ToFile returns string which is name of the file created.
-// any error encountered.
+//If successful, ToTmpFile returns a string
+//which is the name of the created file and nil error.
+//Else if faulse, ToTmpFile returns a empty string and any error encountered.
 func ToTmpFile(src io.Reader) (fileName string, err error) {
 	tmpfile, err := os.CreateTemp("", "")
 	if err != nil {
@@ -56,6 +57,8 @@ func ToTmpFile(src io.Reader) (fileName string, err error) {
 	return
 }
 
+//FileBytes returns a byte array readed
+//from the file named fileName or any error encountered.
 func FileBytes(fileName string) ([]byte, error) {
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -69,6 +72,9 @@ func FileBytes(fileName string) ([]byte, error) {
 	return srcBytes, nil
 }
 
+//BindFiles binds contents of files stocked
+//in srcNames to the file named dstName or any error encountered.
+//The order to bind is the order of the slice index.
 func BindFiles(srcNames []string, dstName string) (err error) {
 	dstfile, err := os.Create(dstName)
 	if err != nil {
