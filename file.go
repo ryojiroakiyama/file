@@ -11,6 +11,7 @@ import (
 //ToFile creates a fileName file and writes contents to the file.
 //If successful, ToFile returns nil error.
 //Else if faulse, ToFile returns any error encountered.
+//Maybe same as os.WriteFile(fileName, contents, 066).
 func ToFile(fileName string, contents []byte) (err error) {
 	dstFile, err := os.Create(fileName)
 	if err != nil {
