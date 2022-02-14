@@ -28,6 +28,7 @@ func ToFile(fileName string, contents []byte) (err error) {
 	if werr != nil {
 		return fmt.Errorf("ToFile: %v", werr)
 	}
+	err = dstFile.Sync()
 	return
 }
 
@@ -54,6 +55,7 @@ func ToTmpFile(src io.Reader) (fileName string, err error) {
 	if err != nil {
 		return "", fmt.Errorf("ToTmpFile: %v", err)
 	}
+	err = tmpfile.Sync()
 	return
 }
 
@@ -99,5 +101,6 @@ func BindFiles(srcNames []string, dstName string) (err error) {
 			return fmt.Errorf("BindFiles: %v", err)
 		}
 	}
-	return err
+	err = dstfile.Sync()
+	return
 }
