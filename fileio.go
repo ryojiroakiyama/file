@@ -1,5 +1,5 @@
-// Package file provides basic functions for file operations.
-package file
+// Package fileio provides basic functions for file operations.
+package fileio
 
 import (
 	"fmt"
@@ -8,11 +8,11 @@ import (
 	"os"
 )
 
-//ToFile creates a fileName file and writes contents to the file.
-//If successful, ToFile returns nil error.
-//Else if faulse, ToFile returns any error encountered.
+//GenFile creates a fileName file and writes contents to the file.
+//If successful, GenFile returns nil error.
+//Else if faulse, GenFile returns any error encountered.
 //Maybe same as os.WriteFile(fileName, contents, 066).
-func ToFile(fileName string, contents []byte) (err error) {
+func GenFile(fileName string, contents []byte) (err error) {
 	dstFile, err := os.Create(fileName)
 	if err != nil {
 		return fmt.Errorf("ToFile: %v", err)
@@ -33,11 +33,11 @@ func ToFile(fileName string, contents []byte) (err error) {
 	return
 }
 
-//ToTmpFile creates a tmpprary file and write contents to the file.
-//If successful, ToTmpFile returns a string
+//GenTmpFile creates a tmpprary file and write contents to the file.
+//If successful, GenTmpFile returns a string
 //which is the name of the created file and nil error.
-//Else if faulse, ToTmpFile returns a empty string and any error encountered.
-func ToTmpFile(src io.Reader) (fileName string, err error) {
+//Else if faulse, GenTmpFile returns a empty string and any error encountered.
+func GenTmpFile(src io.Reader) (fileName string, err error) {
 	tmpfile, err := os.CreateTemp("", "")
 	if err != nil {
 		return "", fmt.Errorf("ToTmpFile: %v", err)
@@ -60,9 +60,9 @@ func ToTmpFile(src io.Reader) (fileName string, err error) {
 	return
 }
 
-//FileBytes returns a byte array readed
+//FileContents returns a byte array readed
 //from the file named fileName or any error encountered.
-func FileBytes(fileName string) ([]byte, error) {
+func FileContents(fileName string) ([]byte, error) {
 	file, err := os.Open(fileName)
 	if err != nil {
 		return nil, fmt.Errorf("FileBytes: %v", err)
