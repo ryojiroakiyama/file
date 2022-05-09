@@ -133,8 +133,8 @@ func TestFileContents(t *testing.T) {
 
 func TestBindFiles(t *testing.T) {
 	type args struct {
-		srcNames []string
-		dstName  string
+		srcPath []string
+		dstPath string
 	}
 	tests := []struct {
 		name        string
@@ -145,10 +145,10 @@ func TestBindFiles(t *testing.T) {
 		{
 			name: "simple",
 			args: args{
-				srcNames: []string{
+				srcPath: []string{
 					"TestBindFilesSrc1", "TestBindFilesSrc2", "TestBindFilesSrc3",
 				},
-				dstName: "TestBindFilesDst",
+				dstPath: "TestBindFilesDst",
 			},
 			srcContents: [][]byte{
 				[]byte("Yabu"), []byte("kara"), []byte("stick"),
@@ -158,10 +158,10 @@ func TestBindFiles(t *testing.T) {
 		{
 			name: "empty dstPath",
 			args: args{
-				srcNames: []string{
+				srcPath: []string{
 					"TestBindFilesSrc3", "TestBindFilesSrc4",
 				},
-				dstName: "",
+				dstPath: "",
 			},
 			srcContents: [][]byte{
 				[]byte("Isino"), []byte("uenimo"), []byte("3years"),
@@ -173,19 +173,19 @@ func TestBindFiles(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			// files setup
-			for i, v := range tt.args.srcNames {
+			for i, v := range tt.args.srcPath {
 				if err := fileio.GenFile(v, tt.srcContents[i]); err != nil {
-					t.Fatalf("GenFile fail: %v. leave files: %v", err, tt.args.srcNames[:i])
+					t.Fatalf("GenFile fail: %v. leave files: %v", err, tt.args.srcPath[:i])
 				}
 			}
 			defer func() {
-				for _, v := range tt.args.srcNames {
+				for _, v := range tt.args.srcPath {
 					os.Remove(v)
 				}
-				os.Remove(tt.args.dstName)
+				os.Remove(tt.args.dstPath)
 			}()
 
-			if err := fileio.BindFiles(tt.args.srcNames, tt.args.dstName); err != nil {
+			if err := fileio.BindFiles(tt.args.srcPath, tt.args.dstPath); err != nil {
 				if !tt.wantErr {
 					t.Errorf("BindFiles() error = %v, wantErr %v", err, tt.wantErr)
 				}
@@ -197,7 +197,7 @@ func TestBindFiles(t *testing.T) {
 			for _, v := range tt.srcContents {
 				wantContents = append(wantContents, v...)
 			}
-			gotContents, err := fileio.FileContents(tt.args.dstName)
+			gotContents, err := fileio.FileContents(tt.args.dstPath)
 			if err != nil {
 				t.Errorf("FileContents() fail: %v", err)
 				return

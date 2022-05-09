@@ -77,8 +77,8 @@ func FileContents(filePath string) ([]byte, error) {
 //BindFiles binds contents of files stocked
 //in srcNames to the file named dstName or any error encountered.
 //The order to bind is the order of the slice index.
-func BindFiles(srcNames []string, dstName string) (err error) {
-	dstfile, err := os.Create(dstName)
+func BindFiles(srcPath []string, dstPath string) (err error) {
+	dstfile, err := os.Create(dstPath)
 	if err != nil {
 		return fmt.Errorf("BindFiles: %v", err)
 	}
@@ -87,10 +87,10 @@ func BindFiles(srcNames []string, dstName string) (err error) {
 			err = fmt.Errorf("BindFiles: %v", cerr)
 		}
 		if err != nil {
-			os.Remove(dstName)
+			os.Remove(dstPath)
 		}
 	}()
-	for _, srcName := range srcNames {
+	for _, srcName := range srcPath {
 		srcfile, err := os.Open(srcName)
 		if err != nil {
 			return fmt.Errorf("BindFiles: %v", err)
