@@ -48,7 +48,8 @@ func TestGenFile(t *testing.T) {
 			defer os.Remove(tt.args.filePath)
 			c, err := fileio.FileContents(tt.args.filePath)
 			if err != nil {
-				t.Fatalf("FileContents error = %v", err)
+				t.Errorf("FileContents error = %v", err)
+				return
 			}
 			if bytes.Compare(c, tt.args.contents) != 0 {
 				t.Errorf("GenFile() contents = %v, want = %v", c, tt.args.contents)
@@ -80,7 +81,8 @@ func TestGenTmpFile(t *testing.T) {
 			defer os.Remove(gotfilePath)
 			c, err := fileio.FileContents(gotfilePath)
 			if err != nil {
-				t.Fatalf("FileContents error = %v", err)
+				t.Errorf("FileContents error = %v", err)
+				return
 			}
 			if bytes.Compare(c, tt.contents) != 0 {
 				t.Errorf("GenFile() contents = %v, want = %v", c, tt.contents)
@@ -124,6 +126,85 @@ func TestFileContents(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FileContents() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestBindFiles(t *testing.T) {
+	type args struct {
+		srcNames []string
+		dstName  string
+	}
+	tests := []struct {
+		name        string
+		args        args
+		srcContents [][]byte
+		wantErr     bool
+	}{
+		{
+			name: "simple",
+			args: args{
+				srcNames: []string{
+					"TestBindFilesSrc1", "TestBindFilesSrc2", "TestBindFilesSrc3",
+				},
+				dstName: "TestBindFilesDst",
+			},
+			srcContents: [][]byte{
+				[]byte("Yabu"), []byte("kara"), []byte("stick"),
+			},
+			wantErr: false,
+		},
+		{
+			name: "empty dstPath",
+			args: args{
+				srcNames: []string{
+					"TestBindFilesSrc3", "TestBindFilesSrc4",
+				},
+				dstName: "",
+			},
+			srcContents: [][]byte{
+				[]byte("Isino"), []byte("uenimo"), []byte("3years"),
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			// files setup
+			for i, v := range tt.args.srcNames {
+				if err := fileio.GenFile(v, tt.srcContents[i]); err != nil {
+					t.Fatalf("GenFile fail: %v. leave files: %v", err, tt.args.srcNames[:i])
+				}
+			}
+			defer func() {
+				for _, v := range tt.args.srcNames {
+					os.Remove(v)
+				}
+				os.Remove(tt.args.dstName)
+			}()
+
+			if err := fileio.BindFiles(tt.args.srcNames, tt.args.dstName); err != nil {
+				if !tt.wantErr {
+					t.Errorf("BindFiles() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				return
+			}
+
+			// contents check
+			var wantContents []byte
+			for _, v := range tt.srcContents {
+				wantContents = append(wantContents, v...)
+			}
+			gotContents, err := fileio.FileContents(tt.args.dstName)
+			if err != nil {
+				t.Errorf("FileContents() fail: %v", err)
+				return
+			}
+			if !reflect.DeepEqual(gotContents, wantContents) {
+				t.Errorf("gotContents = %v, wantContents = %v", gotContents, wantContents)
+				return
 			}
 		})
 	}
