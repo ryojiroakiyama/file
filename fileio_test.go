@@ -44,3 +44,35 @@ func TestGenFile(t *testing.T) {
 		})
 	}
 }
+
+func TestGenTmpFile(t *testing.T) {
+	tests := []struct {
+		name     string
+		contents []byte
+		wantErr  bool
+	}{
+		{
+			name:     "simple",
+			contents: []byte("abc"),
+			wantErr:  false,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			gotFileName, err := fileio.GenTmpFile(bytes.NewReader(tt.contents))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GenTmpFile() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			defer os.Remove(gotFileName)
+			c, err := fileio.FileContents(gotFileName)
+			if err != nil {
+				t.Fatalf("FileContents error = %v", err)
+			}
+			if bytes.Compare(c, tt.contents) != 0 {
+				t.Errorf("GenFile() contents = %v, want = %v", c, tt.contents)
+			}
+		})
+	}
+}

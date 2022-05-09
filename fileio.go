@@ -43,7 +43,6 @@ func GenTmpFile(src io.Reader) (fileName string, err error) {
 		return "", fmt.Errorf("ToTmpFile: %v", err)
 	}
 	fileName = tmpfile.Name()
-	//fmt.Println("create:", fileName)
 	defer func() {
 		if cerr := tmpfile.Close(); cerr != nil {
 			err = fmt.Errorf("ToTmpFile: %v", cerr)
