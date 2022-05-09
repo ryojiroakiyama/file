@@ -8,12 +8,12 @@ import (
 	"os"
 )
 
-//GenFile creates a fileName file and writes contents to the file.
+//GenFile creates a filePath file and writes contents to the file.
 //If successful, GenFile returns nil error.
 //Else if faulse, GenFile returns any error encountered.
-//Maybe same as os.WriteFile(fileName, contents, 066).
-func GenFile(fileName string, contents []byte) (err error) {
-	dstFile, err := os.Create(fileName)
+//Maybe same as os.WriteFile(filePath, contents, 066).
+func GenFile(filePath string, contents []byte) (err error) {
+	dstFile, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("ToFile: %v", err)
 	}
@@ -37,18 +37,18 @@ func GenFile(fileName string, contents []byte) (err error) {
 //If successful, GenTmpFile returns a string
 //which is the name of the created file and nil error.
 //Else if faulse, GenTmpFile returns a empty string and any error encountered.
-func GenTmpFile(src io.Reader) (fileName string, err error) {
+func GenTmpFile(src io.Reader) (filePath string, err error) {
 	tmpfile, err := os.CreateTemp("", "")
 	if err != nil {
 		return "", fmt.Errorf("ToTmpFile: %v", err)
 	}
-	fileName = tmpfile.Name()
+	filePath = tmpfile.Name()
 	defer func() {
 		if cerr := tmpfile.Close(); cerr != nil {
 			err = fmt.Errorf("ToTmpFile: %v", cerr)
 		}
-		if err != nil && fileName != "" {
-			os.Remove(fileName)
+		if err != nil && filePath != "" {
+			os.Remove(filePath)
 		}
 	}()
 	_, err = io.Copy(tmpfile, src)
@@ -60,9 +60,9 @@ func GenTmpFile(src io.Reader) (fileName string, err error) {
 }
 
 //FileContents returns a byte array readed
-//from the file named fileName or any error encountered.
-func FileContents(fileName string) ([]byte, error) {
-	file, err := os.Open(fileName)
+//from the file named filePath or any error encountered.
+func FileContents(filePath string) ([]byte, error) {
+	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("FileBytes: %v", err)
 	}

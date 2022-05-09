@@ -10,7 +10,7 @@ import (
 
 func TestGenFile(t *testing.T) {
 	type args struct {
-		fileName string
+		filePath string
 		contents []byte
 	}
 	tests := []struct {
@@ -21,7 +21,7 @@ func TestGenFile(t *testing.T) {
 		{
 			name: "simple",
 			args: args{
-				fileName: "simple",
+				filePath: "simple",
 				contents: []byte("abc"),
 			},
 			wantErr: false,
@@ -30,11 +30,11 @@ func TestGenFile(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			if err := fileio.GenFile(tt.args.fileName, tt.args.contents); (err != nil) != tt.wantErr {
+			if err := fileio.GenFile(tt.args.filePath, tt.args.contents); (err != nil) != tt.wantErr {
 				t.Errorf("GenFile() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			defer os.Remove(tt.args.fileName)
-			c, err := fileio.FileContents(tt.args.fileName)
+			defer os.Remove(tt.args.filePath)
+			c, err := fileio.FileContents(tt.args.filePath)
 			if err != nil {
 				t.Fatalf("FileContents error = %v", err)
 			}
@@ -60,13 +60,13 @@ func TestGenTmpFile(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			gotFileName, err := fileio.GenTmpFile(bytes.NewReader(tt.contents))
+			gotfilePath, err := fileio.GenTmpFile(bytes.NewReader(tt.contents))
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GenTmpFile() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			defer os.Remove(gotFileName)
-			c, err := fileio.FileContents(gotFileName)
+			defer os.Remove(gotfilePath)
+			c, err := fileio.FileContents(gotfilePath)
 			if err != nil {
 				t.Fatalf("FileContents error = %v", err)
 			}
