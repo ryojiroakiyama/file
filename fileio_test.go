@@ -3,7 +3,7 @@ package fileio_test
 
 import (
 	"bytes"
-	"fileio"
+	"github.com/ryojiroakiyama/fileio"
 	"os"
 	"reflect"
 	"testing"
