@@ -3,13 +3,14 @@ package fileio_test
 
 import (
 	"bytes"
-	"github.com/ryojiroakiyama/fileio"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/ryojiroakiyama/fileio"
 )
 
-func TestGenFile(t *testing.T) {
+func TestWriteToFile(t *testing.T) {
 	type args struct {
 		filePath string
 		contents []byte
@@ -39,9 +40,9 @@ func TestGenFile(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			if err := fileio.GenFile(tt.args.filePath, tt.args.contents); err != nil {
+			if err := fileio.WriteToFile(tt.args.filePath, tt.args.contents); err != nil {
 				if !tt.wantErr {
-					t.Errorf("GenFile() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf("WriteToFile() error = %v, wantErr %v", err, tt.wantErr)
 				}
 				return
 			}
@@ -52,13 +53,13 @@ func TestGenFile(t *testing.T) {
 				return
 			}
 			if bytes.Compare(c, tt.args.contents) != 0 {
-				t.Errorf("GenFile() contents = %v, want = %v", c, tt.args.contents)
+				t.Errorf("WriteToFile() contents = %v, want = %v", c, tt.args.contents)
 			}
 		})
 	}
 }
 
-func TestGenTmpFile(t *testing.T) {
+func TestWriteToTmpFile(t *testing.T) {
 	tests := []struct {
 		name     string
 		contents []byte
@@ -73,9 +74,9 @@ func TestGenTmpFile(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			gotfilePath, err := fileio.GenTmpFile(bytes.NewReader(tt.contents))
+			gotfilePath, err := fileio.WriteToTmpFile(bytes.NewReader(tt.contents))
 			if (err != nil) != tt.wantErr {
-				t.Errorf("GenTmpFile() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("WriteToTmpFile() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			defer os.Remove(gotfilePath)
@@ -85,7 +86,7 @@ func TestGenTmpFile(t *testing.T) {
 				return
 			}
 			if bytes.Compare(c, tt.contents) != 0 {
-				t.Errorf("GenFile() contents = %v, want = %v", c, tt.contents)
+				t.Errorf("WriteToFile() contents = %v, want = %v", c, tt.contents)
 			}
 		})
 	}
@@ -114,8 +115,8 @@ func TestFileContents(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			// test file setup
-			if err := fileio.GenFile(tt.args.filePath, tt.want); err != nil {
-				t.Fatalf("GenFile error: %v", err)
+			if err := fileio.WriteToFile(tt.args.filePath, tt.want); err != nil {
+				t.Fatalf("WriteToFile error: %v", err)
 			}
 			defer os.Remove(tt.args.filePath)
 
@@ -174,8 +175,8 @@ func TestBindFiles(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// files setup
 			for i, v := range tt.args.srcPath {
-				if err := fileio.GenFile(v, tt.srcContents[i]); err != nil {
-					t.Fatalf("GenFile fail: %v. leave files: %v", err, tt.args.srcPath[:i])
+				if err := fileio.WriteToFile(v, tt.srcContents[i]); err != nil {
+					t.Fatalf("WriteToFile fail: %v. leave files: %v", err, tt.args.srcPath[:i])
 				}
 			}
 			defer func() {

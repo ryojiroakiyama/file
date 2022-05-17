@@ -8,11 +8,11 @@ import (
 	"os"
 )
 
-//GenFile creates a filePath file and writes contents to the file.
-//If successful, GenFile returns nil error.
-//Else if faulse, GenFile returns any error encountered.
+//WriteToFile creates a filePath file and writes contents to the file.
+//If successful, WriteToFile returns nil error.
+//Else if faulse, WriteToFile returns any error encountered.
 //Maybe same as os.WriteFile(filePath, contents, 066).
-func GenFile(filePath string, contents []byte) (err error) {
+func WriteToFile(filePath string, contents []byte) (err error) {
 	dstFile, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("ToFile: %v", err)
@@ -33,11 +33,9 @@ func GenFile(filePath string, contents []byte) (err error) {
 	return
 }
 
-//GenTmpFile creates a tmpprary file and write contents to the file.
-//If successful, GenTmpFile returns a string
-//which is the name of the created file and nil error.
-//Else if faulse, GenTmpFile returns a empty string and any error encountered.
-func GenTmpFile(src io.Reader) (filePath string, err error) {
+//WriteToTmpFile creates a tmpprary file and write contents to the file.
+//If successful, writeTmpFile returns a file path and nil error, else returns error.
+func WriteToTmpFile(src io.Reader) (filePath string, err error) {
 	tmpfile, err := os.CreateTemp("", "")
 	if err != nil {
 		return "", fmt.Errorf("ToTmpFile: %v", err)
