@@ -90,7 +90,12 @@ func TestWriteToTmpFile(t *testing.T) {
 				t.Errorf("WriteToTmpFile() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			defer os.Remove(gotfilePath)
+			defer func() {
+				os.Remove(gotfilePath)
+				if tt.dir != "" {
+					os.Remove(tt.dir)
+				}
+			}()
 			c, err := fileio.FileContents(gotfilePath)
 			if err != nil {
 				t.Errorf("FileContents error = %v", err)
